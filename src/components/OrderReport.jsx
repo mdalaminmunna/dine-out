@@ -1,4 +1,8 @@
-export function OrderReport({ orders, filter, setFilter }) {
+import { useState } from "react";
+
+export function OrderReport({ orders }) {
+  const [filter, setFilter] = useState("all");
+
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
@@ -9,6 +13,7 @@ export function OrderReport({ orders, filter, setFilter }) {
     }
     return order.status === filter;
   });
+  console.log(filteredOrders);
 
   return (
     <div>
@@ -56,31 +61,33 @@ export function OrderReport({ orders, filter, setFilter }) {
             </thead>
             <tbody className="text-sm">
               {filteredOrders.map((order) => {
-                <tr key={order.id} className="border-t border-gray-700">
-                  <td className="py-3">{order.id}</td>
-                  <td className="py-3">{order.customerName}</td>
-                  <td className="py-3">{order.items}</td>
-                  <td className="py-3">{order.amount}</td>
-                  <td className="py-3">
-                    <span
-                      className={
-                        order.status === "pending"
-                          ? "text - red - 500"
-                          : "text - green - 500"
-                      }
-                    >
-                      {order.status.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="py-3">
-                    <button className="bg-gray-800 hover:bg-red-600 text-xs px-3 py-1 rounded-full mr-1 transition-colors duration-300">
-                      Delete
-                    </button>
-                    <button className="bg-gray-800 hover:bg-green-600 text-xs px-3 py-1 rounded-full transition-colors duration-300">
-                      DELIVER
-                    </button>
-                  </td>
-                </tr>;
+                return (
+                  <tr key={order.id} className="border-t border-gray-700">
+                    <td className="py-3">{order.id}</td>
+                    <td className="py-3">{order.customerName}</td>
+                    <td className="py-3">{order.items}</td>
+                    <td className="py-3">{order.amount}</td>
+                    <td className="py-3">
+                      <span
+                        className={
+                          order.status === "pending"
+                            ? "text - red - 500"
+                            : "text - green - 500"
+                        }
+                      >
+                        {order.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="py-3">
+                      <button className="bg-gray-800 hover:bg-red-600 text-xs px-3 py-1 rounded-full mr-1 transition-colors duration-300">
+                        Delete
+                      </button>
+                      <button className="bg-gray-800 hover:bg-green-600 text-xs px-3 py-1 rounded-full transition-colors duration-300">
+                        DELIVER
+                      </button>
+                    </td>
+                  </tr>
+                );
               })}
             </tbody>
           </table>

@@ -61,8 +61,7 @@ function App() {
   ]);
 
   const [customerName, setCustomerName] = useState("");
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [filter, setFilter] = useState("all");
+  // const [totalAmount, setTotalAmount] = useState();
 
   return (
     <div className="text-white bg-background">
@@ -75,11 +74,7 @@ function App() {
           <div className="md:col-span-2 h-[calc(100vh_-_130px)]">
             <OrderSummary />
 
-            <OrderReport
-              orders={orders}
-              filter={filter}
-              setFilter={setFilter}
-            />
+            <OrderReport orders={orders} />
           </div>
         </div>
       </div>
