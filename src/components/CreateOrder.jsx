@@ -37,7 +37,7 @@ export function CreateOrder({
       id: orders.length + 1,
       customerName,
       items: selectedItems.length,
-      amount: totalAmount,
+      amount: totalAmount.toFixed(2),
       status: "pending",
     };
 
