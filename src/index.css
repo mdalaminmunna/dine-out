@@ -37,6 +37,7 @@ body {
   background-color: #1d1d1d;
   height: 100vh;
   overflow: hidden;
+  overflow-y: auto;
 }
 
 select {

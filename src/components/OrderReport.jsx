@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function OrderReport({ orders }) {
+export function OrderReport({ orders, setOrders }) {
   const [filter, setFilter] = useState("all");
 
   const handleFilterChange = (event) => {
@@ -13,7 +13,22 @@ export function OrderReport({ orders }) {
     }
     return order.status === filter;
   });
-  console.log(filteredOrders);
+
+  const deleteOrder = (orderID) => {
+    setOrders(
+      orders.filter((order) => {
+        order.id !== orderID;
+      })
+    );
+  };
+
+  const deliverOrder = (orderID) => {
+    setOrders(
+      orders.map((order) =>
+        order.id === orderID ? { ...order, status: "delivered" } : order
+      )
+    );
+  };
 
   return (
     <div>
@@ -28,9 +43,9 @@ export function OrderReport({ orders }) {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="lucide lucide-funnel-icon lucide-funnel"
           >
             <path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" />
@@ -79,12 +94,20 @@ export function OrderReport({ orders }) {
                       </span>
                     </td>
                     <td className="py-3">
-                      <button className="bg-gray-800 hover:bg-red-600 text-xs px-3 py-1 rounded-full mr-1 transition-colors duration-300">
+                      <button
+                        onClick={() => deleteOrder(order.id)}
+                        className="bg-gray-800 hover:bg-red-600 text-xs px-3 py-1 rounded-full mr-1 transition-colors duration-300"
+                      >
                         Delete
                       </button>
-                      <button className="bg-gray-800 hover:bg-green-600 text-xs px-3 py-1 rounded-full transition-colors duration-300">
-                        DELIVER
-                      </button>
+                      {order.status === "pending" && (
+                        <button
+                          onClick={() => deliverOrder(order.id)}
+                          className="bg-gray-800 hover:bg-green-600 text-xs px-3 py-1 rounded-full transition-colors duration-300"
+                        >
+                          DELIVER
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );

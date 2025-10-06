@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateOrder } from "./components/CreateOrder";
 import { Navigations } from "./components/Navigations";
 import { OrderReport } from "./components/OrderReport";
@@ -60,6 +60,14 @@ function App() {
     },
   ]);
 
+  // useEffect(() => {
+  //   fetch("")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setItems(data);
+  //     });
+  // }, []);
+
   const [customerName, setCustomerName] = useState("");
   // const [totalAmount, setTotalAmount] = useState();
 
@@ -74,7 +82,7 @@ function App() {
           <div className="md:col-span-2 h-[calc(100vh_-_130px)]">
             <OrderSummary />
 
-            <OrderReport orders={orders} />
+            <OrderReport orders={orders} setOrders={setOrders} />
           </div>
         </div>
       </div>
