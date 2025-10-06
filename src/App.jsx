@@ -5,68 +5,17 @@ import { OrderReport } from "./components/OrderReport";
 import { OrderSummary } from "./components/OrderSummary";
 
 function App() {
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      customerName: "Aakash Ahmed",
-      items: 5,
-      amount: 123123,
-      status: "pending",
-    },
-    {
-      id: 2,
-      customerName: "Saad Hasan",
-      items: 5,
-      amount: 123123,
-      status: "delivered",
-    },
-    {
-      id: 3,
-      customerName: "MD Salahuddin",
-      items: 5,
-      amount: 123123,
-      status: "pending",
-    },
-  ]);
+  const [orders, setOrders] = useState([]);
 
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "Hamburger",
-      price: 300,
-      image: "./images/hamburger.svg",
-      isSelected: false,
-    },
-    {
-      id: 2,
-      name: "Chicken Nuggets",
-      price: 300,
-      image: "./images/chicken.svg",
-      isSelected: false,
-    },
-    {
-      id: 3,
-      name: "Submarine Sandwich",
-      price: 300,
-      image: "./images/submarine.svg",
-      isSelected: false,
-    },
-    {
-      id: 4,
-      name: "Pizza",
-      price: 300,
-      image: "./images/pizza.svg",
-      isSelected: false,
-    },
-  ]);
+  const [items, setItems] = useState([]);
 
-  // useEffect(() => {
-  //   fetch("")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setItems(data);
-  //     });
-  // }, []);
+  useEffect(() => {
+    fetch("https://dummyjson.com/products")
+      .then((response) => response.json())
+      .then((data) => {
+        setItems(data.products ?? []);
+      });
+  }, []);
 
   const [customerName, setCustomerName] = useState("");
   // const [totalAmount, setTotalAmount] = useState();
@@ -77,10 +26,17 @@ function App() {
         <Navigations />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 flex-grow">
-          <CreateOrder />
+          <CreateOrder
+            customerName={customerName}
+            setCustomerName={setCustomerName}
+            items={items}
+            setItems={setItems}
+            orders={orders}
+            setOrders={setOrders}
+          />
 
           <div className="md:col-span-2 h-[calc(100vh_-_130px)]">
-            <OrderSummary />
+            <OrderSummary orders={orders} />
 
             <OrderReport orders={orders} setOrders={setOrders} />
           </div>

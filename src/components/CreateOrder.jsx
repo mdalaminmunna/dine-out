@@ -1,4 +1,52 @@
-export function CreateOrder() {
+import { useMemo } from "react";
+
+export function CreateOrder({
+  customerName,
+  setCustomerName,
+  items,
+  setItems,
+  orders,
+  setOrders,
+}) {
+  const toggleItem = (itemID) => {
+    const updatedItems = items.map((item) =>
+      item.id === itemID ? { ...item, isSelected: !item.isSelected } : item
+    );
+
+    setItems(updatedItems);
+
+    // const selectedItems = updatedItems.filter((item) => item.isSelected);
+    // const totalAmount = selectedItems.reduce(
+    //   (sum, item) => sum + item.price,
+    //   0
+    // );
+  };
+
+  const totalAmount = useMemo(() => {
+    return (items ?? [])
+      .filter((item) => item.isSelected)
+      .reduce((sum, item) => sum + (item.price || 0), 0);
+  }, [items]);
+
+  const placeOrder = () => {
+    if (!customerName || totalAmount === 0) return;
+
+    const selectedItems = items.filter((item) => item.isSelected);
+
+    const newOrder = {
+      id: orders.length + 1,
+      customerName,
+      items: selectedItems.length,
+      amount: totalAmount,
+      status: "pending",
+    };
+
+    setOrders([...orders, newOrder]);
+
+    setCustomerName("");
+    setItems(items.map((item) => ({ ...item, isSelected: false })));
+  };
+
   return (
     <div className="bg-cardbg rounded-lg p-6 h-[calc(100vh_-_130px)]">
       <h2 className="text-xl font-bold mb-1">CREATE ORDER</h2>
@@ -11,6 +59,8 @@ export function CreateOrder() {
         <label className="block text-sm font-medium mb-2">Customer Name</label>
         <input
           type="text"
+          value={customerName}
+          onChange={(event) => setCustomerName(event.target.value)}
           className="w-full bg-gray-700 bg-opacity-50 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
         />
       </div>
@@ -18,130 +68,63 @@ export function CreateOrder() {
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">Choose Items</label>
         <div className="items-container">
-          <div className="bg-gray-700 bg-opacity-30 rounded-md p-3 mb-3 flex justify-between items-center hover:bg-opacity-40 transition-all duration-300">
-            <div className="flex items-center">
-              <div className="w-12 h-12   flex items-center justify-center mr-3">
-                <img
-                  src="./images/hamburger.svg"
-                  alt="Hamburger"
-                  className="w-10 h-10"
-                />
-              </div>
-              <div>
-                <h3 className="font-medium">Hamburger</h3>
-                <p className="text-xs text-gray-400">BDT 300</p>
-              </div>
-            </div>
-            <button className="w-8 h-8 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-green-500"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+          {items.map((item) => {
+            return (
+              <div
+                key={item.id}
+                className="bg-gray-700 bg-opacity-30 rounded-md p-3 mb-3 flex justify-between items-center hover:bg-opacity-40 transition-all duration-300"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="bg-gray-700 bg-opacity-30 rounded-md p-3 mb-3 flex justify-between items-center hover:bg-opacity-40 transition-all duration-300">
-            <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center mr-3">
-                <img
-                  src="./images/chicken.svg"
-                  alt="Chicken Nuggets"
-                  className="w-10 h-10"
-                />
+                <div className="flex items-center">
+                  <div className="w-12 h-12   flex items-center justify-center mr-3">
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      className="w-10 h-10"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{item.title}</h3>
+                    <p className="text-xs text-gray-400">BDT {item.price}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => toggleItem(item.id)}
+                  className="w-8 h-8 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors duration-300"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-5 w-5 ${
+                      item.isSelected ? "text-red-500" : "text-green-500"
+                    }`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    {item.isSelected ? (
+                      <path
+                        fillRule="evenodd"
+                        d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                        clipRule="evenodd"
+                      />
+                    ) : (
+                      <path
+                        fillRule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clipRule="evenodd"
+                      />
+                    )}
+                  </svg>
+                </button>
               </div>
-              <div>
-                <h3 className="font-medium">Chicken Nuggets</h3>
-                <p className="text-xs text-gray-400">BDT 300</p>
-              </div>
-            </div>
-            <button className="w-8 h-8 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-green-500"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="bg-gray-700 bg-opacity-30 rounded-md p-3 mb-3 flex justify-between items-center hover:bg-opacity-40 transition-all duration-300">
-            <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center mr-3">
-                <img
-                  src="./images/submarine.svg"
-                  alt="Submarine Sandwich"
-                  className="w-10 h-10"
-                />
-              </div>
-              <div>
-                <h3 className="font-medium">Submarine Sandwich</h3>
-                <p className="text-xs text-gray-400">BDT 300</p>
-              </div>
-            </div>
-            <button className="w-8 h-8 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-red-500"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="bg-gray-700 bg-opacity-30 rounded-md p-3 mb-3 flex justify-between items-center hover:bg-opacity-40 transition-all duration-300">
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-md flex items-center justify-center mr-3">
-                <img
-                  src="./images/pizza.svg"
-                  alt="Pizza slices"
-                  className="w-10 h-10"
-                />
-              </div>
-              <div>
-                <h3 className="font-medium">Pizza slices</h3>
-                <p className="text-xs text-gray-400">BDT 300</p>
-              </div>
-            </div>
-            <button className="w-8 h-8 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-green-500"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
+            );
+          })}
         </div>
       </div>
 
-      <button className="w-full bg-primary hover:bg-opacity-90 text-white font-medium py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-        Place Order (BDT 100)
+      <button
+        onClick={placeOrder}
+        className="w-full bg-primary hover:bg-opacity-90 text-white font-medium py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1"
+      >
+        Place Order (BDT {totalAmount.toFixed(2)})
       </button>
     </div>
   );

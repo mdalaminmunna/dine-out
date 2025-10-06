@@ -15,11 +15,7 @@ export function OrderReport({ orders, setOrders }) {
   });
 
   const deleteOrder = (orderID) => {
-    setOrders(
-      orders.filter((order) => {
-        order.id !== orderID;
-      })
-    );
+    setOrders(orders.filter((order) => order.id !== orderID));
   };
 
   const deliverOrder = (orderID) => {
@@ -86,8 +82,8 @@ export function OrderReport({ orders, setOrders }) {
                       <span
                         className={
                           order.status === "pending"
-                            ? "text - red - 500"
-                            : "text - green - 500"
+                            ? "text-red-500"
+                            : "text-green-500"
                         }
                       >
                         {order.status.toUpperCase()}
