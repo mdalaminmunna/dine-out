@@ -1,25 +1,28 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
-export function CreateOrder({
-  customerName,
-  setCustomerName,
-  items,
-  setItems,
-  orders,
-  setOrders,
-}) {
+export function CreateOrder({ orders, setOrders }) {
+  const [items, setItems] = useState([]);
+  const [customerName, setCustomerName] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  useEffect(() => {
+    fetch("https://dummyjson.com/products")
+      .then((response) => response.json())
+      .then((data) => {
+        setItems(data.products ?? []);
+      });
+  }, []);
+
   const toggleItem = (itemID) => {
-    const updatedItems = items.map((item) =>
-      item.id === itemID ? { ...item, isSelected: !item.isSelected } : item
-    );
+    setItems((prevItems) => {
+      const updatedItems = prevItems.map((item) =>
+        item.id === itemID ? { ...item, isSelected: !item.isSelected } : item
+      );
 
-    setItems(updatedItems);
+      setSelectedItems(updatedItems.filter((item) => item.isSelected));
 
-    // const selectedItems = updatedItems.filter((item) => item.isSelected);
-    // const totalAmount = selectedItems.reduce(
-    //   (sum, item) => sum + item.price,
-    //   0
-    // );
+      return updatedItems;
+    });
   };
 
   const totalAmount = useMemo(() => {
@@ -30,8 +33,6 @@ export function CreateOrder({
 
   const placeOrder = () => {
     if (!customerName || totalAmount === 0) return;
-
-    const selectedItems = items.filter((item) => item.isSelected);
 
     const newOrder = {
       id: orders.length + 1,
