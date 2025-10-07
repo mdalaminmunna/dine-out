@@ -14,22 +14,22 @@ export function CreateOrder({ orders, setOrders }) {
   }, []);
 
   const toggleItem = (itemID) => {
-    setItems((prevItems) => {
-      const updatedItems = prevItems.map((item) =>
-        item.id === itemID ? { ...item, isSelected: !item.isSelected } : item
-      );
-
-      setSelectedItems(updatedItems.filter((item) => item.isSelected));
-
-      return updatedItems;
+    setSelectedItems((prevItemIds) => {
+      if (!Array.isArray(prevItemIds)) prevItemIds = [];
+      if (prevItemIds.includes(itemID)) {
+        return prevItemIds.filter((id) => id !== itemID);
+      }
+      return [...prevItemIds, itemID];
     });
   };
 
   const totalAmount = useMemo(() => {
+    if (!selectedItems || selectedItems.length === 0) return 0;
+    const idSet = new Set(selectedItems);
     return (items ?? [])
-      .filter((item) => item.isSelected)
+      .filter((item) => idSet.has(item.id))
       .reduce((sum, item) => sum + (item.price || 0), 0);
-  }, [items]);
+  }, [items, selectedItems]);
 
   const placeOrder = () => {
     if (!customerName || totalAmount === 0) return;
@@ -45,7 +45,7 @@ export function CreateOrder({ orders, setOrders }) {
     setOrders([...orders, newOrder]);
 
     setCustomerName("");
-    setItems(items.map((item) => ({ ...item, isSelected: false })));
+    setSelectedItems([]);
   };
 
   return (
@@ -95,12 +95,14 @@ export function CreateOrder({ orders, setOrders }) {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-5 w-5 ${
-                      item.isSelected ? "text-red-500" : "text-green-500"
+                      (selectedItems || []).includes(item.id)
+                        ? "text-red-500"
+                        : "text-green-500"
                     }`}
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
-                    {item.isSelected ? (
+                    {(selectedItems || []).includes(item.id) ? (
                       <path
                         fillRule="evenodd"
                         d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
